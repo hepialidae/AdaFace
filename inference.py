@@ -13,10 +13,9 @@ def load_pretrained_model(architecture='ir_50'):
     # load model and pretrained statedict
     assert architecture in adaface_models.keys()
     model = net.build_model(architecture)
-    with torch.serialization.add_safe_globals([pytorch_lightning.callbacks.model_checkpoint.ModelCheckpoint]):
-        statedict = torch.load(adaface_models[architecture])['state_dict']
-        model_statedict = {key[6:]:val for key, val in statedict.items() if key.startswith('model.')}
-        model.load_state_dict(model_statedict)
+    statedict = torch.load(adaface_models[architecture], weights_only=False)['state_dict']
+    model_statedict = {key[6:]:val for key, val in statedict.items() if key.startswith('model.')}
+    model.load_state_dict(model_statedict)
     model.eval()
     return model
 
